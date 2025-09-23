@@ -1,6 +1,5 @@
-# DI
-
----
+# 🐮 CowTrack
+![Imagen de ejemplo](https://agendaagraria.com.ar/wp-content/uploads/2023/07/tambo.jpg)
 
 # 📌 Índice
 - [Descripción del proyecto](#descripción-del-proyecto)  
@@ -16,6 +15,17 @@
 
 # 🧾Descripción del proyecto
 
+**🐄 CowTrack** es una aplicación sencilla de gestión de vacas orientada a pequeñas granjas.  
+Su objetivo es ofrecer una herramienta práctica y fácil de usar para controlar información básica de cada animal, así como su alimentación y producción de leche.  
+
+La aplicación permite:  
+- Registrar vacas con datos esenciales (nombre, edad, raza).  
+- Llevar un control de litros de leche producidos cada día.  
+- Consultar un historial de alimentación básico.  
+- Generar estadísticas rápidas para mejorar la gestión del establo.  
+
+Con **CowTrack**, cualquier granjero puede tener a mano un registro simple y organizado de sus vacas sin necesidad de sistemas complejos.  
+
 ---
 
 # 🕙Estado del proyecto
@@ -27,18 +37,27 @@ El desarrollo de la aplicación aún sigue en curso. Seguimos trabajando cada d�
 ---
 
 # 📖Demostración de funciones y aplicaciones
+- **Gestión de vacas** → creación, edición y eliminación de registros.  
+- **Control de leche** → registro de litros producidos por día.  
+- **Historial de alimentación** → anotar qué tipo de comida recibió cada vaca.  
+- **Estadísticas rápidas** → resumen de producción mensual y promedio de alimentación.  
 
 ---
 
 # 📲Acceso al proyecto
+🔗 Puedes acceder al repositorio en GitHub aquí: [CowTrack](https://github.com/davidnoya/cowtrack)  
+
+*(Enlace de acceso disponible próximamente)*  
 
 ---
 
 # 🔧Tecnologías utilizadas 
-- Android Studio
-- PyCharm - Python
-- IntelliJ - Java
-- GitHub - Control de versiones
+- **Android Studio** → desarrollo de la aplicación móvil  
+- **PyCharm - Python** → pruebas y prototipos de lógica de negocio  
+- **IntelliJ - Java** → implementación de funcionalidades principales  
+- **SQLite** → base de datos ligera para almacenamiento local  
+- **GitHub - Control de versiones**  
+
 ---
 
 # 🫂Personas contribuyentes

@@ -1,6 +1,8 @@
 # 🐮 CowTrack
 ![Imagen de ejemplo](https://agendaagraria.com.ar/wp-content/uploads/2023/07/tambo.jpg)
 
+---
+
 # 📌 Índice
 - [Descripción del proyecto](#descripción-del-proyecto)  
 - [Estado del proyecto](#estado-del-proyecto)  

@@ -65,7 +65,7 @@ El desarrollo de la aplicación aún sigue en curso. Seguimos trabajando cada d�
 # 🫂Personas contribuyentes
 
 - **José Vidal Fernández**  
-  📧 *dnoyav23@fpcoruna.afundacion.org*  
+  📧 *jvidalf23@fpcoruna.afundacion.org*  
   🔗 [GitHub](https://github.com/)
 
 - **Jorge Álvarez Canosa**  

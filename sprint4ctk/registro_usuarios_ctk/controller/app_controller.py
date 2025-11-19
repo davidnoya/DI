@@ -1,33 +1,98 @@
 from tkinter import messagebox
-
 from model.usuario_model import GestorUsuarios, Usuario
 from view.main_view import MainView, NuevoUsuario
 from pathlib import Path
+import threading
+import time
+
 
 class AppController:
     def __init__(self, root):
         self.root = root
+        self.modelo = GestorUsuarios()
+        self.vista = MainView(root)
+
+        self.auto_guardar_activo = False
+        self.auto_guardar_hilo = None
+        self.RUTACSV = Path(__file__).resolve().parent.parent / "usuarios.csv"
+        self.usuarios_actuales = []
+
         self.BASE_DIR = Path(__file__).resolve().parent.parent
         self.ASSETS_PATH = self.BASE_DIR / "assets"
 
         self.avatar_images = {}
 
-        self.modelo = GestorUsuarios()
-        self.vista = MainView(root)
-
+        self.cargar_usuarios()
         self.refrescar_lista_usuarios()
 
         self.vista.boton_añadir.configure(command=self.abrir_ventana_añadir)
+        self.vista.boton_guardar_csv.configure(command=self.toggle_auto_guardado)
 
         self.vista.buscar_var.trace_add("write", lambda *args: self.refrescar_lista_usuarios())
         self.vista.filtro_genero.configure(command=lambda value: self.refrescar_lista_usuarios())
 
-        self.vista.menu_archivo.add_command(label="Guardar", command=self.guardar_usuarios)
+        self.vista.menu_archivo.add_command(label="Guardar", command=self.guardar_csv_manual)
         self.vista.menu_archivo.add_command(label="Cargar", command=self.cargar_usuarios)
 
-        self.vista.menu_ayuda.add_command(label="Salir", command=self.root.quit)
+        self.vista.boton_salir.configure(command=self.salir)
+        self.vista.menu_ayuda.add_command(label="Salir", command=self.salir)
+        self.root.protocol("WM_DELETE_WINDOW", self.salir)
 
-        self.cargar_usuarios()
+
+    def guardar_csv(self, ruta_csv=None):
+        if ruta_csv is None:
+            ruta_csv = self.RUTACSV
+        try:
+            self.modelo.guardar_csv(ruta_csv)
+            return True
+        except Exception as e:
+            print(f"Error en guardar_csv: {e}")
+            return False
+
+    def guardar_csv_manual(self):
+        if self.guardar_csv():
+            self.set_status("Usuarios guardados manualmente.")
+        else:
+            self.set_status(f"Error al guardar: Consulte la consola para más detalles.")
+
+    def toggle_auto_guardado(self):
+        if not self.auto_guardar_activo:
+            self.auto_guardar_activo = True
+            self.vista.boton_guardar_csv.configure(
+                text="Desactivar Guardado CSV",
+                fg_color="#CC0000",
+                hover_color="#AA0000"
+            )
+            self.auto_guardar_hilo = threading.Thread(target=self.auto_guardar_loop, daemon=True)
+            self.auto_guardar_hilo.start()
+            self.set_status("Guardado automático activado.")
+        else:
+            self.auto_guardar_activo = False
+            self.vista.boton_guardar_csv.configure(
+                text="Activar Guardado CSV",
+                fg_color="#007BFF",
+                hover_color="#0066AA"
+            )
+            self.set_status("Guardado automático desactivado.")
+
+    def auto_guardar_loop(self):
+        while self.auto_guardar_activo:
+            time.sleep(10)
+
+            if not self.auto_guardar_activo:
+                break
+
+            guardado_exitoso = self.guardar_csv(self.RUTACSV)
+
+            if guardado_exitoso:
+                self.root.after(0, lambda: self.set_status(f"Auto-guardado OK en {time.strftime('%H:%M:%S')}"))
+            else:
+                self.root.after(0, lambda: self.set_status("Error en Auto-guardado."))
+
+    def salir(self):
+        self.auto_guardar_activo = False
+        self.guardar_csv()
+        self.root.destroy()
 
     def refrescar_lista_usuarios(self):
         nombre_busqueda = self.vista.buscar_var.get().lower()
@@ -41,15 +106,23 @@ class AppController:
         if genero_filtro != "Todos":
             usuarios = [u for u in usuarios if u.genero == genero_filtro]
 
-        self.vista.actualizar_lista_usuarios(usuarios, self.seleccionar_usuario)
-        total = len(usuarios)
+        self.usuarios_actuales = usuarios
+
+        self.vista.actualizar_lista_usuarios(self.usuarios_actuales, self.seleccionar_usuario)
+
+        total = len(self.usuarios_actuales)
         if total == 1:
             self.set_status("1 usuario encontrado")
         else:
             self.set_status(f"{total} usuarios encontrados")
 
     def seleccionar_usuario(self, indice, editar=False):
-        usuario = self.modelo.listar()[indice]
+        try:
+            usuario = self.usuarios_actuales[indice]
+        except IndexError:
+            self.set_status("Error: Índice de usuario no válido en la lista actual.")
+            return
+
         self.vista.mostrar_detalles_usuario(usuario)
         self.vista.eliminar_button.configure(command=lambda: self.eliminar_usuario(usuario))
 
@@ -82,14 +155,6 @@ class AppController:
 
         except ValueError as e:
             messagebox.showerror("Error", str(e))
-
-    def guardar_usuarios(self):
-        ruta_csv = self.BASE_DIR / "usuarios.csv"
-        try:
-            self.modelo.guardar_csv(ruta_csv)
-            self.set_status("Usuarios guardados correctamente.")
-        except Exception as e:
-            self.set_status(f"Error al guardar: {e}")
 
     def cargar_usuarios(self):
         ruta_csv = self.BASE_DIR / "usuarios.csv"

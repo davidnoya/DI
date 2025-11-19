@@ -115,6 +115,9 @@ class MainView:
 
         self._imagen_avatar = None
 
+        self.eliminar_button = ctk.CTkButton(info, text="Eliminar Usuario")
+        self.eliminar_button.pack(pady=5)
+
         self.boton_añadir = ctk.CTkButton(contenedorIzquierdo, text="Añadir Usuario")
         self.boton_añadir.pack(pady=(10, 5), fill="x", padx=10)
 
@@ -137,6 +140,11 @@ class MainView:
             anchor="center"
         )
         self.barra_estado.grid(row=1, column=0, columnspan=2, sticky="we", padx=5, pady=2)
+        # Imagen por defecto
+        self.avatar_default_img = ctk.CTkImage(light_image=Image.new("RGB", (150, 150), color="gray"), size=(150, 150))
+        # Imagen actual
+        self._imagen_avatar = self.avatar_default_img
+        self.avatar.configure(image=self._imagen_avatar)
 
     def actualizar_lista_usuarios(self, usuarios, on_seleccionar_callback):
         for widget in self.lista_frame.winfo_children():
@@ -157,14 +165,14 @@ class MainView:
         self.edad.configure(text=f"Edad: {usuario.edad}")
         self.genero.configure(text=f"Género: {usuario.genero}")
 
-        ruta = os.path.join("assets", usuario.avatar)
-
-        if os.path.exists(ruta):
-            img = Image.open(ruta)
-            self._imagen_avatar = ctk.CTkImage(img, size=(150, 150))
-
-            self.avatar.configure(image=self._imagen_avatar, text="")
-            self.avatar.image = self._imagen_avatar
+        if usuario.avatar:
+            ruta = os.path.join("assets", usuario.avatar)
+            if os.path.exists(ruta):
+                img = Image.open(ruta)
+                self._imagen_avatar = ctk.CTkImage(light_image=img, size=(150, 150))
+            else:
+                self._imagen_avatar = self.avatar_default_img
         else:
-            self.avatar.configure(text="Sin imagen", image=None)
-            self.avatar.image = None
+            self._imagen_avatar = self.avatar_default_img
+
+        self.avatar.configure(image=self._imagen_avatar, text="")

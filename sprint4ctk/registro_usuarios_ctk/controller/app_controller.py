@@ -51,6 +51,8 @@ class AppController:
     def seleccionar_usuario(self, indice, editar=False):
         usuario = self.modelo.listar()[indice]
         self.vista.mostrar_detalles_usuario(usuario)
+        self.vista.eliminar_button.configure(command=lambda: self.eliminar_usuario(usuario))
+
         if editar:
             self.abrir_modal_editar(usuario)
 
@@ -127,3 +129,9 @@ class AppController:
         except ValueError as e:
             messagebox.showerror("Error", str(e))
 
+    def eliminar_usuario(self, usuario):
+        if messagebox.askyesno("Confirmar", f"¿Deseas eliminar a {usuario.nombre}?"):
+            self.modelo.usuarios.remove(usuario)
+            self.refrescar_lista_usuarios()
+            self.vista.mostrar_detalles_usuario(Usuario("", 0, "", ""))
+            self.set_status(f"Usuario {usuario.nombre} eliminado")

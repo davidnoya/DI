@@ -74,6 +74,21 @@ class MainView:
         tituloIzquierda = ctk.CTkLabel(contenedorIzquierdo, text="Usuarios", font=("Arial", 18, "bold"))
         tituloIzquierda.pack(pady=(5, 10))
 
+        self.buscar_var = ctk.StringVar()
+        self.buscar_entry = ctk.CTkEntry(
+            contenedorIzquierdo,
+            placeholder_text="Buscar por nombre",
+            textvariable=self.buscar_var
+        )
+        self.buscar_entry.pack(fill="x", padx=5, pady=(0, 5))
+
+        self.filtro_genero = ctk.CTkComboBox(
+            contenedorIzquierdo,
+            values=["Todos", "Femenino", "Masculino", "Otro"]
+        )
+        self.filtro_genero.set("Todos")
+        self.filtro_genero.pack(fill="x", padx=5, pady=(0, 10))
+
         self.lista_frame = ctk.CTkScrollableFrame(contenedorIzquierdo, width=200)
         self.lista_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -115,6 +130,14 @@ class MainView:
         self.menu_ayuda = tkinter.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Ayuda", menu=self.menu_ayuda)
 
+        self.barra_estado = ctk.CTkLabel(
+            root,
+            text="Listo",
+            height=25,
+            anchor="center"
+        )
+        self.barra_estado.grid(row=1, column=0, columnspan=2, sticky="we", padx=5, pady=2)
+
     def actualizar_lista_usuarios(self, usuarios, on_seleccionar_callback):
         for widget in self.lista_frame.winfo_children():
             widget.destroy()
@@ -126,6 +149,8 @@ class MainView:
                 command=lambda idx=i: on_seleccionar_callback(idx)
             )
             btn.pack(fill="x", padx=5, pady=5)
+
+            btn.bind("<Double-Button-1>", lambda e, idx=i: on_seleccionar_callback(idx, editar=True))
 
     def mostrar_detalles_usuario(self, usuario):
         self.nombre.configure(text=f"Nombre: {usuario.nombre}")

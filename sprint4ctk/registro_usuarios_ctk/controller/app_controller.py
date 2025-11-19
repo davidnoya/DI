@@ -19,6 +19,13 @@ class AppController:
 
         self.vista.boton_añadir.configure(command=self.abrir_ventana_añadir)
 
+        self.vista.menu_archivo.add_command(label="Guardar", command=self.guardar_usuarios)
+        self.vista.menu_archivo.add_command(label="Cargar", command=self.cargar_usuarios)
+
+        self.vista.menu_ayuda.add_command(label="Salir", command=self.root.quit)
+
+        self.cargar_usuarios()
+
     def refrescar_lista_usuarios(self):
         usuarios = self.modelo.listar()
 
@@ -57,3 +64,19 @@ class AppController:
 
         except ValueError as e:
             messagebox.showerror("Error", str(e))
+
+    def guardar_usuarios(self):
+        ruta_csv = self.BASE_DIR / "usuarios.csv"
+        try:
+            self.modelo.guardar_csv(ruta_csv)
+            messagebox.showinfo("Guardar", "Usuarios guardados correctamente.")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo guardar: {e}")
+
+    def cargar_usuarios(self):
+        ruta_csv = self.BASE_DIR / "usuarios.csv"
+        try:
+            self.modelo.cargar_csv(ruta_csv)
+            self.refrescar_lista_usuarios()
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo cargar: {e}")

@@ -1,4 +1,5 @@
 import os
+import tkinter
 from pathlib import Path
 import customtkinter as ctk
 from PIL import Image
@@ -104,6 +105,15 @@ class MainView:
 
         self.boton_salir = ctk.CTkButton(contenedorIzquierdo, text="Salir", command=root.destroy)
         self.boton_salir.pack(pady=(0, 10), fill="x", padx=10)
+
+        self.menubar = tkinter.Menu(root, tearoff=0)
+        root.config(menu=self.menubar)
+
+        self.menu_archivo = tkinter.Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Archivo", menu=self.menu_archivo)
+
+        self.menu_ayuda = tkinter.Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Ayuda", menu=self.menu_ayuda)
 
     def actualizar_lista_usuarios(self, usuarios, on_seleccionar_callback):
         for widget in self.lista_frame.winfo_children():
